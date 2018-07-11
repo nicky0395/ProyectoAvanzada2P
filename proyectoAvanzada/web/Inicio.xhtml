@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./Template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">
+        Inicio
+    </ui:define>
+    <ui:define name = "content">
+
+        <script type="text/javascript">
+            function handleDrop(event, ui) {
+                var droppedCar = ui.draggable;
+
+                droppedCar.fadeOut('fast');
+            }
+        </script>
+
+        <h:form id="carForm">
+            <script type="text/javascript">
+                function limpiarForm()
+                {
+                    document.getElementById("carForm").reset();
+                }
+            </script>
+            <p:fieldset id ="DatosCliente" legend="Ingreso Datos">
+                <center>
+                    <h:panelGrid columns ="3" cellpadding="20">
+                        <h:panelGrid columns="2" cellpadding="10" >
+
+                            <p:outputLabel for="date" value="Cedula: " />
+                            <p:inputMask id="date" value="#{formularioBean.cedula}" mask="9999999999"/>
+
+                            <p:outputLabel for="phone" value="Nombre:" />
+                            <p:inputMask id="phone" value="#{formularioBean.nombre}" mask=""/>
+
+                            <p:outputLabel for="phoneWithExt" value="Apellido:" />
+                            <p:inputMask id="phoneWithExt" value="#{formularioBean.apellido}" mask=""/>
+
+                            <p:outputLabel for="taxId" value="Nacionalidad:" />
+                            <p:inputMask id="taxId" value="#{formularioBean.nacionalidad}" mask=""/>
+
+                            <p:outputLabel for="ssn" value="Fecha Nacimiento:" />
+                            <p:inputMask id="ssn" value="#{formularioBean.fechaN}" mask="99-99-9999"/>
+
+
+                        </h:panelGrid >
+
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <p:outputLabel for="Datosaerolinea" value="Aerolínea: " />
+                            <p:selectOneMenu id="Datosaerolinea" value="#{avionesBean.nombreAerolinea}" style="width: 200px">
+                                <p:ajax listener="#{asientosBean.conCambio(avionesBean.nombreAerolinea)}" update="availableCarsField"  />
+                                <f:selectItem itemLabel="Seleccione la Aerolínea" itemValue="" />
+                                <f:selectItems value="#{avionesBean.aerolineas}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="DatosDestino" value="Ruta: " />
+                            <p:selectOneMenu id="DatosDestino" value="#{vuelosBean.nombreVuelo}" style="width: 200px">
+                                <p:ajax listener="#{formularioBean.setOrigenDestino(vuelosBean.nombreVuelo)}"/>
+                                <f:selectItem itemLabel="Seleccione la ruta" itemValue="" />
+                                <f:selectItems value="#{vuelosBean.rutas}" />
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+
+                        <p:commandButton id="botonReserva" value="Realizar Reserva" actionListener="#{formularioBean.registrar}">
+                            <p:ajax listener="#{formularioBean.Lista(asientosBean.asientosReservados, avionesBean.nombreAerolinea)}" update="availableCarsField"  />
+                        </p:commandButton>
+                        <p:commandButton value="Nueva Reserva" action="reset" oncomplete="limpiarForm()">
+                    </p:commandButton>
+
+                </h:panelGrid>
+            </center>
+        </p:fieldset>
+
+        <p:fieldset id="availableCarsField" legend="Asientos disponibles" style="margin-top: 10px">
+            <p:dataGrid id="availableCars" var="car" value="#{asientosBean.asientos}" columns="10">
+                <p:panel id="pnl" header="#{car.numero}" style="text-align:center">
+                    <h:panelGrid columns="1" style="width:100%">
+                        <h:graphicImage value = "https://banner2.kisspng.com/20180412/osw/kisspng-airplane-airline-seat-computer-icons-train-clip-ar-croissant-5acefe6e15dd85.9673319615235149900896.jpg" height="100" width="100" style="align-content: center"></h:graphicImage>
+                    </h:panelGrid>
+                </p:panel>
+
+                <p:draggable for="pnl" revert="true" handle=".ui-panel-titlebar" stack=".ui-panel"/>
+            </p:dataGrid>
+        </p:fieldset>
+
+        <p:fieldset id="selectedCars" legend="Asientos Seleccionados" style="margin-top:20px">
+            <p:outputPanel id="dropArea">
+                <h:outputText value="Arrastre su asiento hasta aquí" rendered="#{empty asientosBean.asientosReservados}" style="font-size:24px;" />
+                <p:dataTable id="selectedCarsTable" var="car" value="#{asientosBean.asientosReservados}" rendered="#{not empty asientosBean.asientosReservados}">
+
+                    <p:column headerText="Número de asiento" style="text-align: center">
+                        <h:outputText value="#{car.numero}" />
+                    </p:column>
+
+                    <p:column headerText="Código de vuelo" style="text-align: center">
+                        <h:outputText value="#{car.vuelo}" />
+                    </p:column>
+
+                    <p:column headerText="Detalles" style="text-align: center">
+                        <h:outputText value="#{car.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre Aerolínea" style="text-align: center">
+                        <h:outputText value="#{car.nombre}" />
+                    </p:column>
+
+                    <p:column style="width:32px">
+                        <p:commandButton update=":carForm:display" oncomplete="PF('carDialog').show()" icon="ui-icon-search">
+                            <f:setPropertyActionListener value="#{car}" target="#{asientosBean.asientoSeleccionado}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:outputPanel>
+        </p:fieldset>
+
+        <p:droppable for="selectedCars" tolerance="touch" activeStyleClass="ui-state-highlight" datasource="availableCars" onDrop="handleDrop">
+            <p:ajax listener="#{asientosBean.onCarDrop}" update="dropArea availableCars" />
+        </p:droppable>
+
+        <p:dialog header="Detalles asiento" widgetVar="carDialog" resizable="false" draggable="false"
+                  showEffect="fade" hideEffect="fade" modal="true" >
+
+            <p:outputPanel id="display">
+                <h:panelGrid columns="2" cellpadding="5" rendered="#{not empty asientosBean.asientoSeleccionado}">
+                    <f:facet name="header">
+
+                    </f:facet>
+
+                    <h:outputText value="Número de asiento: " />
+                    <h:outputText value="#{asientosBean.asientoSeleccionado.numero}" style="font-weight:bold"/>
+
+                    <h:outputText value="Código de vuelo: " />
+                    <h:outputText value="#{asientosBean.asientoSeleccionado.vuelo}" style="font-weight:bold"/>
+
+                    <h:outputText value="Detalles: " />
+                    <h:outputText value="#{asientosBean.asientoSeleccionado.descripcion}" style="font-weight:bold"/>
+
+                    <h:outputText value="Nombre Aerolínea: " />
+                    <h:outputText value="#{asientosBean.asientoSeleccionado.nombre}" style="font-weight:bold"/>
+                </h:panelGrid>
+            </p:outputPanel>
+        </p:dialog>
+    </h:form>
+
+</ui:define>
+
+<ui:define name="bottom"></ui:define>
+
+
+</ui:composition>

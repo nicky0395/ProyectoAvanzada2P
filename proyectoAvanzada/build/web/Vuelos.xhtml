@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./Template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:define name="titulo">
+        Vuelos
+    </ui:define>
+
+    <ui:define name="content">
+        <p:dataTable var="vuelo" value="#{vuelosBean.vuelos}">
+            <p:column headerText="Código vuelo" style="text-align: center">
+                <h:outputText value="#{vuelo.cod_vuelo}" />
+            </p:column>
+
+            <p:column headerText="Código avión" style="text-align: center">
+                <h:outputText value="#{vuelo.cod_avion}" />
+            </p:column>
+
+            <p:column headerText="Origen" style="text-align: center">
+                <h:outputText value="#{vuelo.origen}" />
+            </p:column>
+
+            <p:column headerText="Destino" style="text-align: center">
+                <h:outputText value="#{vuelo.destino}" />
+            </p:column>
+            
+            <p:column headerText="Fecha Salida" style="text-align: center">
+                <h:outputText value="#{vuelo.fecha_salida}" />
+            </p:column>
+            
+            <p:column headerText="Fecha Llegada" style="text-align: center">
+                <h:outputText value="#{vuelo.fecha_llegada}" />
+            </p:column>
+            
+            <p:column headerText="Precio" style="text-align: center">
+                <h:outputText value="#{vuelo.precio}" />
+            </p:column>
+        </p:dataTable>
+    </ui:define>
+
+</ui:composition>

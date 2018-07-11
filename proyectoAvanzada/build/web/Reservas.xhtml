@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./Template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+
+    <ui:define name="titulo">
+        Reservas
+    </ui:define>
+    
+    <ui:define name="content">
+        <p:dataTable var="reserva" value="#{reservasBean.reservas}">
+            <p:column headerText="Código reserva" style="text-align: center">
+                <h:outputText value="#{reserva.cod_reserva}" />
+            </p:column>
+
+            <p:column headerText="Código Cliente" style="text-align: center">
+                <h:outputText value="#{reserva.cod_cliente}" />
+            </p:column>
+
+            <p:column headerText="Código vuelo" style="text-align: center">
+                <h:outputText value="#{reserva.cod_vuelo}" />
+            </p:column>
+
+            <p:column headerText="Número Asiento" style="text-align: center">
+                <h:outputText value="#{reserva.numero_asiento}" />
+            </p:column>
+        </p:dataTable>
+    </ui:define>
+
+
+</ui:composition>
